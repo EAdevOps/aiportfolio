@@ -3,10 +3,15 @@ import type { ChatMessage } from "@/lib/types";
 type Props = {
   messages: ChatMessage[];
   thinking: boolean;
+  /** Extra space at the bottom so bubbles never sit under the dock */
+  reserveBottomPx?: number;
 };
 
-export default function ChatArea({ messages, thinking }: Props) {
-  // Hide any system turns from the UI
+export default function ChatArea({
+  messages,
+  thinking,
+  reserveBottomPx = 0,
+}: Props) {
   const visible = messages.filter((m) => m.role !== "system");
 
   if (visible.length === 0 && !thinking) {
@@ -18,7 +23,10 @@ export default function ChatArea({ messages, thinking }: Props) {
   }
 
   return (
-    <ul className="space-y-3 max-w-3xl mx-auto py-2">
+    <ul
+      className="space-y-3 max-w-3xl mx-auto pt-2"
+      style={{ paddingBottom: reserveBottomPx }}
+    >
       {visible.map((m, i) => {
         const isUser = m.role === "user";
         return (

@@ -2,7 +2,7 @@
 
 :root {
   --background: #2c3539;
-  --foreground: #171717;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -24,7 +24,7 @@
 }
 
 body {
-  background-color: var(--background);
+  background-color: var(--foreground);
 }
 
 .btn {
@@ -34,8 +34,8 @@ body {
   margin-bottom: 30px;
   margin-right: 3px;
   margin-left: 0px;
-  color: #000;
-  border: 1px solid white;
+  color: #00bfff;
+  border: 1px solid #00bfff;
   text-transform: uppercase;
   transition: 0.3s ease;
   font-weight: 400;
@@ -46,6 +46,7 @@ body {
   color: #000000;
   border-radius: 10px;
   background-color: #f5f5f5;
-  box-shadow: 0 0 5px #fff, 0 0 25px #fff, 0 0 50px #fff, 0 0 200px #fff;
+  box-shadow: 0 0 5px #00bfff, 0 0 25px #00bfff, 0 0 50px #00bfff,
+    0 0 200px #00bfff;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
 }
