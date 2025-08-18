@@ -84,17 +84,18 @@ export default function Page() {
           return () => cancelAnimationFrame(id);
         }, [state.messages?.length, state.thinking, showDock, dockPx]);
 
-        // Keep input focused (mount, after dock shows, after response arrives)
+        // --- STABLE FOCUS MANAGEMENT (single effect; fixed deps length) ---
         useEffect(() => {
+          if (!showDock) return;
+          // Focus when dock first appears
           focusInput();
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, []);
-        useEffect(() => {
-          if (showDock) requestAnimationFrame(focusInput);
-        }, [showDock]);
-        useEffect(() => {
-          if (!state.thinking) requestAnimationFrame(focusInput);
-        }, [state.thinking]);
+          // Nudge focus next frame
+          requestAnimationFrame(focusInput);
+          // When thinking finishes, refocus so user can type again
+          if (!state.thinking) {
+            requestAnimationFrame(focusInput);
+          }
+        }, [showDock, state.thinking]);
 
         // Show scrollbar only on hover / active scroll
         useEffect(() => {
@@ -237,9 +238,9 @@ export default function Page() {
                 {/* Sticky bottom dock (Tabs above Input) */}
                 <div
                   ref={dockRef}
-                  className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from #2c3539 to #121212"
+                  className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-[#2c3539] to-[#121212]"
                 >
-                  <div className="mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw] max-w-5xl px-4 sm:px-6 py-3">
+                  <div className="mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw] max-w-5xl py-3">
                     <div className="flex flex-col items-stretch gap-3">
                       <Tabs onSelect={handleTabSelect} centerOnMobile />
                       <ChatInput

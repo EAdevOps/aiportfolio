@@ -19,7 +19,7 @@ const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 // ---- Helpers for persona & nudges
 function followUpForTab(tab: TabKey): string {
   switch (tab) {
-    case "about":
+    case "me":
       return "🤝 Anything you wanna know specifically—education, recent work, or goals?";
     case "projects":
       return "🧪 Wanna see a GitHub link, a quick demo, or a deeper dive into one project?";

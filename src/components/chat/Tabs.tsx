@@ -1,6 +1,6 @@
 // components/chat/Tabs.tsx
 import type { TabKey } from "@/lib/types";
-import Image from "next/image"; // if using Next.js
+import Image from "next/image";
 
 type Props = {
   onSelect: (tab: TabKey) => void;
@@ -13,18 +13,17 @@ export default function Tabs({
   variant = "top",
   centerOnMobile = false,
 }: Props) {
-  const tabs: TabKey[] = ["about", "projects", "skills", "contact"];
+  const tabs: TabKey[] = ["me", "projects", "skills", "contact"];
 
-  // Map tab keys to their PNG icon file paths (put PNGs in /public/icons/)
   const icons: Record<TabKey, string> = {
-    about: "/icons/me.png",
+    me: "/icons/me.png",
     projects: "/icons/projects.png",
     skills: "/icons/skills.png",
     contact: "/icons/contact.png",
   };
 
   const wrap = [
-    "w-full flex flex-wrap gap-1 justify-evenly",
+    "flex flex-row gap-2 w-full", // row layout
     variant === "bottom" ? "" : "",
   ]
     .filter(Boolean)
@@ -35,18 +34,39 @@ export default function Tabs({
       {tabs.map((t) => (
         <button
           key={t}
-          className="btn backdrop-blur rounded text-[0.9rem] flex flex-col items-center"
+          className="
+            flex-1 
+            btn backdrop-blur rounded 
+            flex flex-col items-center justify-center
+            py-3
+          "
           onClick={() => onSelect(t)}
         >
-          {/* Use Next.js Image (optimized) or <img> */}
-          <Image
-            src={icons[t]}
-            alt={`${t} icon`}
-            width={50}
-            height={50}
-            className="mb-1 inline"
-          />
-          <span>{t[0].toUpperCase() + t.slice(1)}</span>
+          {/* Icon */}
+          <div className="flex items-center justify-center mb-1">
+            <Image
+              src={icons[t]}
+              alt={`${t} icon`}
+              width={40}
+              height={40}
+              className="
+                w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14
+                drop-shadow-lg
+              "
+            />
+          </div>
+
+          {/* Label */}
+          <span
+            className="
+              text-[0.65rem] sm:text-sm 
+              
+              font-mono
+              text-center
+            "
+          >
+            {t[0].toUpperCase() + t.slice(1)}
+          </span>
         </button>
       ))}
     </div>

@@ -5,4 +5,4 @@ export interface ChatMessage {
   content: string;
 }
 
-export type TabKey = "about" | "projects" | "skills" | "contact";
+export type TabKey = "me" | "projects" | "skills" | "contact";

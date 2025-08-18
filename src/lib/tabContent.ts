@@ -1,7 +1,7 @@
 import type { TabKey } from "./types";
 
 export const TAB_CONTENT: Record<TabKey, string> = {
-  about: `Hey! I’m Ehsan — a CS student (graduating 2025) focused on ML/AI and full-stack development.
+  me: `Hey! I’m Ehsan — a CS student (graduating 2025) focused on ML/AI and full-stack development.
 
 Highlights:
 • Built ML demos (digit recognizer, IDS prototype)
