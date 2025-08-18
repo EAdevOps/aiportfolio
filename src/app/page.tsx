@@ -177,7 +177,7 @@ export default function Page() {
                 <div className="w-full max-w-5xl text-center px-2">
                   {showWelcome && (
                     <>
-                      <h1 className="font-logo text-[#00bfff] leading-none text-[clamp(3rem,18vw,12rem)]">
+                      <h1 className="font-logo leading-none text-[clamp(3rem,18vw,12rem)]">
                         EA
                       </h1>
                       <h2 className="font-mono mt-2 leading-tight text-[clamp(1.125rem,4.5vw,3rem)]">
@@ -186,7 +186,6 @@ export default function Page() {
                     </>
                   )}
                   <div className="mt-6 flex flex-col gap-3 items-stretch max-w-3xl mx-auto">
-                    <Tabs onSelect={handleTabSelect} centerOnMobile />
                     <ChatInput
                       ref={refs.taRef}
                       value={state.q}
@@ -196,6 +195,7 @@ export default function Page() {
                       showHint
                       onKeyDown={actions.onKeyDown}
                     />
+                    <Tabs onSelect={handleTabSelect} centerOnMobile />
                   </div>
                 </div>
               </main>
@@ -237,7 +237,7 @@ export default function Page() {
                 {/* Sticky bottom dock (Tabs above Input) */}
                 <div
                   ref={dockRef}
-                  className="fixed bottom-0 inset-x-0 z-50 border-t bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50"
+                  className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from #2c3539 to #121212"
                 >
                   <div className="mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw] max-w-5xl px-4 sm:px-6 py-3">
                     <div className="flex flex-col items-stretch gap-3">

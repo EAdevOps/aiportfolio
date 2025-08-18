@@ -1,21 +1,28 @@
 // components/chat/Tabs.tsx
 import type { TabKey } from "@/lib/types";
+import Image from "next/image"; // if using Next.js
 
 type Props = {
   onSelect: (tab: TabKey) => void;
   variant?: "top" | "bottom";
-  /** Kept for compatibility (not needed for evenly spaced) */
   centerOnMobile?: boolean;
 };
 
 export default function Tabs({
   onSelect,
   variant = "top",
-  centerOnMobile = false, // kept, unused for now
+  centerOnMobile = false,
 }: Props) {
   const tabs: TabKey[] = ["about", "projects", "skills", "contact"];
 
-  // Even spacing across the row in ALL contexts (landing + sticky)
+  // Map tab keys to their PNG icon file paths (put PNGs in /public/icons/)
+  const icons: Record<TabKey, string> = {
+    about: "/icons/me.png",
+    projects: "/icons/projects.png",
+    skills: "/icons/skills.png",
+    contact: "/icons/contact.png",
+  };
+
   const wrap = [
     "w-full flex flex-wrap gap-1 justify-evenly",
     variant === "bottom" ? "" : "",
@@ -28,10 +35,18 @@ export default function Tabs({
       {tabs.map((t) => (
         <button
           key={t}
-          className="btn backdrop-blur rounded text-[10px]"
+          className="btn backdrop-blur rounded text-[0.9rem] flex flex-col items-center"
           onClick={() => onSelect(t)}
         >
-          {t[0].toUpperCase() + t.slice(1)}
+          {/* Use Next.js Image (optimized) or <img> */}
+          <Image
+            src={icons[t]}
+            alt={`${t} icon`}
+            width={50}
+            height={50}
+            className="mb-1 inline"
+          />
+          <span>{t[0].toUpperCase() + t.slice(1)}</span>
         </button>
       ))}
     </div>
