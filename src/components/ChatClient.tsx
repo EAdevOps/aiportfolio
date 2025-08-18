@@ -47,7 +47,15 @@ export default function ChatClient({
   }, [messages, thinking]);
 
   useEffect(() => {
-    if (compact) taRef.current?.focus();
+    // Only focus when we're in "chat mode" (no active tab)
+    // AND only on desktop pointers, so phones don't raise the keyboard.
+    const isDesktop =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer:fine)").matches;
+
+    if (isDesktop && compact && !activeTab) {
+      taRef.current?.focus();
+    }
   }, [compact, activeTab]);
 
   function enterCompact() {
