@@ -1,6 +1,5 @@
 // components/chat/Tabs.tsx
 import type { TabKey } from "@/lib/types";
-import Image from "next/image";
 
 type Props = {
   onSelect: (tab: TabKey) => void;
@@ -16,15 +15,16 @@ export default function Tabs({
   const tabs: TabKey[] = ["me", "projects", "skills", "contact"];
 
   const icons: Record<TabKey, string> = {
-    me: "/icons/me.png",
-    projects: "/icons/projects.png",
-    skills: "/icons/skills.png",
-    contact: "/icons/contact.png",
+    me: "/icons/me2.svg",
+    projects: "/icons/project.svg",
+    skills: "/icons/skill.svg",
+    contact: "/icons/contact1.svg",
   };
 
   const wrap = [
-    "flex flex-row gap-2 w-full", // row layout
+    "flex flex-row gap-2 w-full",
     variant === "bottom" ? "" : "",
+    centerOnMobile ? "justify-center sm:justify-start" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -35,34 +35,39 @@ export default function Tabs({
         <button
           key={t}
           className="
-            flex-1 
-            btn backdrop-blur rounded 
-            flex flex-col items-center justify-center
-            py-3
+            flex-1
+            btn backdrop-blur rounded
+            flex items-center justify-center
+            gap-2 px-3 py-2
           "
           onClick={() => onSelect(t)}
         >
-          {/* Icon */}
-          <div className="flex items-center justify-center mb-1">
-            <Image
-              src={icons[t]}
-              alt={`${t} icon`}
-              width={40}
-              height={40}
+          {/* Icon wrapper ensures perfect centering */}
+          <div className="flex items-center justify-center">
+            <div
+              aria-hidden
               className="
-                w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14
+                w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7
                 drop-shadow-lg
+                bg-gradient-to-r from-fuchsia-500 to-cyan-500
               "
+              style={{
+                maskImage: `url(${icons[t]})`,
+                WebkitMaskImage: `url(${icons[t]})`,
+                maskRepeat: "no-repeat",
+                WebkitMaskRepeat: "no-repeat",
+                maskPosition: "center",
+                WebkitMaskPosition: "center",
+                maskSize: "contain",
+                WebkitMaskSize: "contain",
+              }}
             />
           </div>
-
           {/* Label */}
           <span
             className="
-              text-[0.65rem] sm:text-sm 
-              
+              text-xs sm:text-sm md:text-base
               font-mono
-              text-center
             "
           >
             {t[0].toUpperCase() + t.slice(1)}

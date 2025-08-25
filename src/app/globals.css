@@ -24,7 +24,7 @@
 }
 
 body {
-  background-color: var(--background);
+  background-color: #000;
 }
 
 .btn {
@@ -50,8 +50,7 @@ body {
     0 0 200px #f5f5f5;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
 }
-h1,
-h2 {
+h1 {
   background-image: repeating-linear-gradient(
     to right,
     #a2682a 0%,
@@ -74,7 +73,7 @@ h2 {
   -webkit-text-fill-color: transparent;
 
   filter: drop-shadow(0 0 1px rgba(255, 200, 0, 0.3));
-  animation: MoveBackgroundPosition 6s ease-in-out infinite;
+  animation: MoveBackgroundPosition 3s ease-in-out infinite;
 }
 
 @keyframes MoveBackgroundPosition {

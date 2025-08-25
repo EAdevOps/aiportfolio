@@ -36,7 +36,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
     const canSend = value.trim().length > 0 && !disabled;
 
     return (
-      <div className="relative">
+      <div className="relative w-[70%] mx-auto">
         <textarea
           ref={setRefs}
           value={value}
@@ -47,11 +47,11 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
           aria-label="Ask anything"
           disabled={disabled}
           className="
-            w-full resize-none overflow-hidden
-            rounded-2xl border px-4 py-3 pr-12
-            text-base leading-6
-            outline-none focus:ring-2 focus:ring-indigo-500
-            max-h-80 bg-white
+            w-full backdrop-blur resize-none overflow-hidden
+    rounded-full border border-gray-400 px-4 py-3 pr-12
+    text-base leading-6 placeholder-white
+    outline-none focus:ring-2 focus:ring-indigo-500
+    max-h-80 text-white
           "
         />
         <button
@@ -59,19 +59,21 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
           aria-label="Send"
           onClick={onSubmit}
           disabled={!canSend}
-          className={`absolute right-2 bottom-6 rounded-full p-2  ${
-            canSend
-              ? "bg-black text-white hover:opacity-90"
-              : "opacity-40 pointer-events-none"
-          }`}
+          className={`
+            absolute right-2 top-1/2 -translate-y-1/2
+            h-9 w-9 rounded-full flex items-center justify-center
+            transition 
+            ${
+              canSend
+                ? "bg-white text-black hover:opacity-80"
+                : "opacity-40 pointer-events-none"
+            }
+          `}
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="purple">
             <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>
-        {showHint && (
-          <p className="mt-2 text-xs text-gray-500">Shift+Enter for newline</p>
-        )}
       </div>
     );
   }

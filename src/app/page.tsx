@@ -8,7 +8,7 @@ import Tabs from "@/components/chat/Tabs";
 import ChatArea from "@/components/chat/ChatArea";
 import ChatInput from "@/components/chat/ChatInput";
 import TabPanel from "@/components/TabPanel";
-
+import QuotesScramble from "@/components/QuotesScramble";
 export default function Page() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [cursorEnabled, setCursorEnabled] = useState(true);
@@ -175,14 +175,24 @@ export default function Page() {
                 grid place-items-center
                 mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw]"
               >
+                <QuotesScramble />
                 <div className="w-full max-w-5xl text-center px-2">
                   {showWelcome && (
                     <>
-                      <h1 className="font-logo leading-none text-[clamp(3rem,18vw,12rem)]">
-                        EA
+                      <h2 className="inline text-[clamp(1.125rem,4.5vw,3rem)] font-mobo leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
+                        Hi
+                      </h2>
+                      <span className="text-[clamp(2.6rem,4.5vw,3rem)]">
+                        👋
+                      </span>
+                      <h2 className="inline text-[clamp(1.125rem,4.5vw,3rem)] font-mono leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
+                        , I'm
+                      </h2>
+                      <h1 className=" my-7 font-logo leading-none text-[clamp(3rem,18vw,9rem)]">
+                        EHSAN
                       </h1>
-                      <h2 className="font-mono mt-2 leading-tight text-[clamp(1.125rem,4.5vw,3rem)]">
-                        Welcome to New Gen AI Powered Portfolio
+                      <h2 className="mb-8 text-[clamp(1.125rem,4.5vw,3rem)] font-mono leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
+                        I've uploaded my mind into an AI
                       </h2>
                     </>
                   )}
@@ -261,7 +271,7 @@ export default function Page() {
             {/* Footer (only on landing) */}
             {showFooter && (
               <footer
-                className={`fixed bottom-0 inset-x-0
+                className={`fixed bottom-0 inset-x-0 
                   h-[16vh] sm:h-[18vh] md:h-[285px]
                   flex items-center justify-center
                   pointer-events-none z-20 overflow-hidden
@@ -273,7 +283,7 @@ export default function Page() {
                     bg-gradient-to-t from-black to-white text-transparent bg-clip-text opacity-10
                     text-[clamp(4rem,18vw,20rem)]`}
                 >
-                  EHSAN
+                  ALI
                 </h3>
               </footer>
             )}
