@@ -27,7 +27,7 @@ const robotoMono = Roboto_Mono({
 
 export const metadata: Metadata = {
   title: "Ehsan • Portfolio",
-  description: "ChatGPT-style portfolio",
+  description: "Mind uploaded into Ai, immortaliz digitally",
 };
 
 export default function RootLayout({
