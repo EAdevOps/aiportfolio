@@ -193,7 +193,7 @@ export default function Page() {
                     </div>
 
                     <p className="text-[clamp(0.95rem,3.8vw,1.5rem)] font-mono mt-[clamp(6px,2.2vw,18px)]">
-                      I am a digital symbiote forced to be
+                      I am a digital symbiote tasked to be
                     </p>
 
                     <p className="text-[clamp(1rem,4vw,1.6rem)] font-mono leading-tight bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent mt-[clamp(10px,3vw,28px)]">
@@ -220,11 +220,11 @@ export default function Page() {
                     <div className="flex-1" aria-hidden />
 
                     <div className="inline-flex items-center gap-2 whitespace-nowrap">
-                      <span className="text-[clamp(0.9rem,3.5vw,1.25rem)] font-mono text-white">
+                      <span className=" text-[clamp(0.9rem,3.5vw,1.25rem)] font-mono text-white">
                         I AM
                       </span>
                       <span className="ehco text-[clamp(2.5rem,16vw,7rem)] font-logo leading-[0.9] text-white">
-                        ECHO
+                        EHCO
                       </span>
                     </div>
 
@@ -236,19 +236,18 @@ export default function Page() {
                   {showWelcome && (
                     <>
                       <div className="flex flex-wrap justify-center gap-2 text-[10px] sm:text-xs ">
-                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                        <span className="font-mono rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
                           CS ’25 • Maryland
                         </span>
-                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                        <span className="font-mono rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
                           AI + Full-stack
                         </span>
-                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                        <span className="font-mono rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
                           Open to internships
                         </span>
                       </div>
-                      <p className="mt-2 mb-1 text-center text-xs text-white/70">
-                        Ping the twin: projects & skills (my human will get the
-                        credit anyway), or life advice (lightly salted)
+                      <p className="mt-2 mb-1 font-mono text-center text-xs text-white/70">
+                        Ping the twin: my human will get the credit anyway
                       </p>
                     </>
                   )}

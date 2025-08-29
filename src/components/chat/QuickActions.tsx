@@ -134,7 +134,7 @@ export default function QuickActions({
   };
 
   const wrap = [
-    "flex w-full flex-wrap items-center gap-2",
+    "font-mono flex w-full flex-wrap items-center gap-2",
     centerOnMobile ? "justify-center sm:justify-start" : "",
     className,
   ]
@@ -206,9 +206,9 @@ export default function QuickActions({
   };
 
   const fullButtonClass =
-    " flex-1 min-w-[100px] rounded-xl border border-white/30  backdrop-blur px-4 py-3 text-gray-400 hover:bg-black/5 active:scale-95 transition shadow-sm flex items-center justify-center gap-2";
+    " flex-1 min-w-[100px] rounded-xl border border-white/30  backdrop-blur px-4 py-3 text-gray-400 hover:bg-black/5 active:scale-95 transition shadow-sm flex items-center justify-center gap-2 font-mono";
   const smallMoreBtnClass =
-    "h-9 px-3 rounded-lg border border-white/30 bg-white/10 text-gray-400 hover:bg-white/15 active:scale-95 text-xs inline-flex items-center gap-1";
+    "h-9 px-3 rounded-lg border border-white/30 bg-white/10 text-gray-400 hover:bg-white/15 active:scale-95 text-xs inline-flex items-center gap-1 font-mono ";
 
   return (
     <>
@@ -281,7 +281,7 @@ export default function QuickActions({
         <div
           ref={overlayRef}
           onClick={onOverlayClick}
-          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3"
+          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 "
         >
           <div
             ref={dialogRef}
@@ -291,7 +291,7 @@ export default function QuickActions({
             className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#121212] text-white shadow-2xl"
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <h3 className="text-base font-semibold">Quick FAQ</h3>
+              <h3 className="text-base font-mono">Quick FAQ</h3>
               <button
                 onClick={closeModal}
                 className="h-8 w-8 grid place-items-center rounded-md hover:bg-white/10"
