@@ -82,7 +82,7 @@ export default function QuotesScramble({ className = "" }: Props) {
   return (
     <section
       ref={sectionRef}
-      className={`absolute inset-0 -z-10 overflow-hidden text-xs font-mono text-[12px] text-white/20 pointer-events-none ${className}`}
+      className={`absolute inset-0 -z-10 overflow-hidden text-xs font-mono text-[12px] text-[#00ff2b] opacity-20 pointer-events-none ${className}`}
     >
       <div className="quote">Half human, half algorithm...</div>
       <div className="quote">Teaching humans to imagine...</div>

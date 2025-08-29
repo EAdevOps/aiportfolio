@@ -43,7 +43,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
           rows={1}
-          placeholder="Ask anything…"
+          placeholder="Ping EHCO... 👀"
           aria-label="Ask anything"
           disabled={disabled}
           className="
@@ -51,7 +51,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
     rounded-full border border-gray-400 px-4 py-3 pr-12
     text-base leading-6 placeholder-white
     outline-none focus:ring-2 focus:ring-indigo-500
-    max-h-80 text-white
+    max-h-80 text-white item-center
           "
         />
         <button
@@ -65,7 +65,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, Props>(
             transition 
             ${
               canSend
-                ? "bg-white text-black hover:opacity-80"
+                ? "bg-white text-red hover:opacity-80"
                 : "opacity-40 pointer-events-none"
             }
           `}

@@ -1,30 +1,32 @@
+// components/ChatClient.tsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { ChatMessage, TabKey } from "@/lib/types";
-import { TAB_CONTENT } from "@/lib/tabContent";
-import { routeQuestion } from "@/lib/routeQuestion";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import type { ChatMessage } from "@/lib/types";
+import type { ToolInvocation, ToolName } from "@/lib/tooling";
+import { makeToolInvocation } from "@/lib/tooling";
+
+type NullableRef<T> = RefObject<T | null>;
 
 type Controller = {
   state: {
     messages: ChatMessage[];
     q: string;
     thinking: boolean;
-    compact: boolean;
-    activeTab: TabKey | null;
     year: number;
   };
   refs: {
-    listRef: React.MutableRefObject<HTMLDivElement | null>;
-    taRef: React.MutableRefObject<HTMLTextAreaElement | null>;
+    listRef: NullableRef<HTMLDivElement>;
+    taRef: NullableRef<HTMLTextAreaElement>;
   };
   actions: {
     setQ: (v: string) => void;
-    enterCompact: () => void;
-    onTabSelect: (tab: TabKey) => void;
     sendMessage: (raw?: string) => Promise<void>;
     onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+
+    openTool: (tool: ToolName) => void;
   };
+  toolsByMsg: Record<string, ToolInvocation[]>;
 };
 
 export default function ChatClient({
@@ -35,8 +37,9 @@ export default function ChatClient({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [q, setQ] = useState("");
   const [thinking, setThinking] = useState(false);
-  const [compact, setCompact] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabKey | null>(null);
+  const [toolsByMsg, setToolsByMsg] = useState<
+    Record<string, ToolInvocation[]>
+  >({});
   const year = useMemo(() => new Date().getFullYear(), []);
 
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -47,81 +50,122 @@ export default function ChatClient({
   }, [messages, thinking]);
 
   useEffect(() => {
-    // Only focus when we're in "chat mode" (no active tab)
-    // AND only on desktop pointers, so phones don't raise the keyboard.
     const isDesktop =
       typeof window !== "undefined" &&
       window.matchMedia("(pointer:fine)").matches;
+    if (isDesktop) taRef.current?.focus();
+  }, []);
 
-    if (isDesktop && compact && !activeTab) {
-      taRef.current?.focus();
+  const uid = () =>
+    typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
+      : String(Date.now()) + Math.random().toString(16).slice(2);
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function typewriter(
+    text: string,
+    update: (partial: string) => void,
+    opts?: { base?: number; jitter?: number }
+  ) {
+    const base = opts?.base ?? 16;
+    const jitter = opts?.jitter ?? 12;
+
+    let acc = "";
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      acc += ch;
+      update(acc);
+
+      let delay = base + Math.random() * jitter;
+      if (".,!?:;".includes(ch)) delay += 60;
+      if (ch === "\n") delay += 80;
+      if (text.length > 1200) delay *= 0.8;
+
+      await sleep(delay);
     }
-  }, [compact, activeTab]);
-
-  function enterCompact() {
-    if (!compact) setCompact(true);
   }
 
-  function onTabSelect(tab: TabKey) {
-    enterCompact();
+  function openTool(tool: ToolName) {
     setThinking(false);
-    setMessages([]); // clear chat per your rule
-    setActiveTab(tab); // TabPanel handles the content
+    setQ("");
+
+    // clean screen, create a fresh assistant message shell
+    const msgId = uid();
+    setMessages([{ role: "assistant", content: "", id: msgId }]);
+
+    // attach a synthetic tool invocation so ToolRenderer mounts the page
+    setToolsByMsg({ [msgId]: [makeToolInvocation(tool)] });
+
+    // scroll to bottom
+    requestAnimationFrame(() => {
+      listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+    });
   }
 
   async function sendMessage(raw?: string) {
     const text = (raw ?? q).trim();
     if (!text || thinking) return;
 
-    // typing switches back to chat mode
-    setActiveTab(null);
-    enterCompact();
+    const userMsg: ChatMessage = { role: "user", content: text };
+    const outgoing = [userMsg];
 
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setMessages([userMsg]);
+    setToolsByMsg({});
     setQ("");
     setThinking(true);
 
-    // local route to portfolio content
-    const routed = routeQuestion(text);
-    if (routed) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: TAB_CONTENT[routed] },
-      ]);
-      setThinking(false);
-      return;
-    }
-
     try {
+      const ac = new AbortController();
+      const t = setTimeout(() => ac.abort(), 20_000);
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ messages: outgoing }),
+        signal: ac.signal,
       });
-      const raw = await res.text();
+
+      clearTimeout(t);
 
       if (!res.ok) {
+        const text = await res.text().catch(() => "");
         const msg =
-          res.status === 429
+          text ||
+          (res.status === 429
             ? "I’m getting a lot of requests—try again in a few seconds."
-            : `Server error (${res.status}). Please try again.`;
+            : `Server error (${res.status}). Please try again.`);
         setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
+        setThinking(false);
         return;
       }
 
-      const data = JSON.parse(raw);
-      const reply = String(data?.reply ?? "…");
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch (err) {
-      console.error(err);
+      const data = await res.json();
+      const fullReply = String(data?.reply ?? "");
+      const msgId = uid();
+
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: "Oops — AI backend is unavailable right now.",
-        },
+        { role: "assistant", content: "", id: msgId },
       ]);
-    } finally {
+      setThinking(false);
+
+      await typewriter(fullReply || "", (partial) => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === msgId ? { ...m, content: partial } : m))
+        );
+        listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+      });
+
+      if (Array.isArray(data.toolInvocations) && data.toolInvocations.length) {
+        setToolsByMsg({ [msgId]: data.toolInvocations });
+      }
+    } catch (err: any) {
+      const aborted = err?.name === "AbortError";
+      const msg = aborted
+        ? "The model took too long to respond. Try again."
+        : "Oops — AI backend is unavailable.";
+      setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
       setThinking(false);
     }
   }
@@ -136,9 +180,10 @@ export default function ChatClient({
   return (
     <>
       {children({
-        state: { messages, q, thinking, compact, activeTab, year },
+        state: { messages, q, thinking, year },
         refs: { listRef, taRef },
-        actions: { setQ, enterCompact, onTabSelect, sendMessage, onKeyDown },
+        actions: { setQ, sendMessage, onKeyDown, openTool }, // 👈 expose it
+        toolsByMsg,
       })}
     </>
   );

@@ -50,7 +50,9 @@ body {
     0 0 200px #f5f5f5;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
 }
-h1 {
+h1,
+.tags,
+.ehco {
   background-image: repeating-linear-gradient(
     to right,
     #a2682a 0%,
@@ -88,4 +90,7 @@ h1 {
   100% {
     background-position: 0% 50%;
   }
+}
+p {
+  color: #fff;
 }

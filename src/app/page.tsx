@@ -4,19 +4,21 @@ import React, { useEffect, useRef, useState } from "react";
 import ChatClient from "@/components/ChatClient";
 import FluidCursor from "@/components/FluidCursor";
 import Header from "@/components/chat/Header";
-import Tabs from "@/components/chat/Tabs";
+
+import QuickActions from "@/components/chat/QuickActions";
 import ChatArea from "@/components/chat/ChatArea";
 import ChatInput from "@/components/chat/ChatInput";
-import TabPanel from "@/components/TabPanel";
+
 import QuotesScramble from "@/components/QuotesScramble";
+
 export default function Page() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [cursorEnabled, setCursorEnabled] = useState(true);
   const [showFooter, setShowFooter] = useState(true);
-  const [showDock, setShowDock] = useState(false); // landing: centered; after interaction: sticky dock
+  const [showDock, setShowDock] = useState(false);
 
   const dockRef = useRef<HTMLDivElement | null>(null);
-  const [dockPx, setDockPx] = useState(160); // updated when dock mounts
+  const [dockPx, setDockPx] = useState(160);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +28,7 @@ export default function Page() {
 
   return (
     <ChatClient>
-      {({ state, refs, actions }) => {
+      {({ state, refs, actions, toolsByMsg }) => {
         const focusInput = () => {
           const el =
             (refs.taRef?.current as
@@ -84,17 +86,12 @@ export default function Page() {
           return () => cancelAnimationFrame(id);
         }, [state.messages?.length, state.thinking, showDock, dockPx]);
 
-        // --- STABLE FOCUS MANAGEMENT (single effect; fixed deps length) ---
+        // Stable focus management
         useEffect(() => {
           if (!showDock) return;
-          // Focus when dock first appears
           focusInput();
-          // Nudge focus next frame
           requestAnimationFrame(focusInput);
-          // When thinking finishes, refocus so user can type again
-          if (!state.thinking) {
-            requestAnimationFrame(focusInput);
-          }
+          if (!state.thinking) requestAnimationFrame(focusInput);
         }, [showDock, state.thinking]);
 
         // Show scrollbar only on hover / active scroll
@@ -144,11 +141,6 @@ export default function Page() {
           flipToDock();
         };
 
-        const handleTabSelect = (tab: unknown) => {
-          actions.onTabSelect(tab as any);
-          flipToDock();
-        };
-
         return (
           <div
             id="container"
@@ -170,44 +162,107 @@ export default function Page() {
             {!showDock && (
               <main
                 className="
-                [--footer-h:16vh] sm:[--footer-h:18vh] md:[--footer-h:285px]
-                h-[calc(100vh-10vh-var(--footer-h))]
-                grid place-items-center
-                mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw]"
+      [--footer-h:0px] sm:[--footer-h:18vh] md:[--footer-h:285px]
+      h-[calc(100vh-10vh-var(--footer-h))]
+      grid place-items-center
+      mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw]"
               >
-                <QuotesScramble />
-                <div className="w-full max-w-5xl text-center px-2">
-                  {showWelcome && (
-                    <>
-                      <h2 className="inline text-[clamp(1.125rem,4.5vw,3rem)] font-mobo leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
-                        Hi
-                      </h2>
-                      <span className="text-[clamp(2.6rem,4.5vw,3rem)]">
+                {showWelcome && (
+                  <div
+                    className="
+          grid place-items-center text-center mx-auto gap-1 m-0 p-0 [&_*]:m-0 [&_*]:p-0
+          /* ⬇️ make hero tall enough to center the ECHO line */
+          min-h-[clamp(260px,40vh,520px)] sm:min-h-[clamp(320px,48vh,640px)] md:min-h-[clamp(380px,56vh,760px)]
+
+          flex flex-col
+        "
+                  >
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-mobo text-[clamp(1rem,4vw,2rem)] bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                        Hello
+                      </span>
+                      <span className="text-[clamp(1.75rem,8vw,2.75rem)] text-white">
                         👋
                       </span>
-                      <h2 className="inline text-[clamp(1.125rem,4.5vw,3rem)] font-mono leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
-                        , I'm
-                      </h2>
-                      <h1 className=" my-7 font-logo leading-none text-[clamp(3rem,18vw,9rem)]">
-                        EHSAN
-                      </h1>
-                      <h2 className="mb-8 text-[clamp(1.125rem,4.5vw,3rem)] font-mono leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500">
-                        I've uploaded my mind into an AI
-                      </h2>
+                      <span className="font-mono text-[clamp(1rem,4vw,2rem)] text-white">
+                        ,
+                      </span>
+                      <span className="font-mono text-[clamp(1rem,4vw,2rem)] bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                        World!
+                      </span>
+                    </div>
+
+                    <p className="text-[clamp(0.95rem,3.8vw,1.5rem)] font-mono mt-[clamp(6px,2.2vw,18px)]">
+                      I am a digital symbiote forced to be
+                    </p>
+
+                    <p className="text-[clamp(1rem,4vw,1.6rem)] font-mono leading-tight bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent mt-[clamp(10px,3vw,28px)]">
+                      <span className="ehco text-[clamp(1.3rem,6vw,2.1rem)]">
+                        EH
+                      </span>
+                      <span className="text-[clamp(1rem,4vw,1.6rem)] font-mono bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                        san&apos;s
+                      </span>{" "}
+                      <span className="ehco text-[clamp(1.3rem,6vw,2.1rem)]">
+                        C
+                      </span>
+                      <span className="text-[clamp(1rem,4vw,1.6rem)] font-mono bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                        ognitive
+                      </span>{" "}
+                      <span className="ehco text-[clamp(1.3rem,6vw,2.1rem)]">
+                        O
+                      </span>
+                      <span className="text-[clamp(1rem,4vw,1.6rem)] font-mono bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                        perator
+                      </span>
+                    </p>
+
+                    <div className="flex-1" aria-hidden />
+
+                    <div className="inline-flex items-center gap-2 whitespace-nowrap">
+                      <span className="text-[clamp(0.9rem,3.5vw,1.25rem)] font-mono text-white">
+                        I AM
+                      </span>
+                      <span className="ehco text-[clamp(2.5rem,16vw,7rem)] font-logo leading-[0.9] text-white">
+                        ECHO
+                      </span>
+                    </div>
+
+                    <div className="flex-1" aria-hidden />
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-3 items-stretch max-w-3xl mx-auto">
+                  {showWelcome && (
+                    <>
+                      <div className="flex flex-wrap justify-center gap-2 text-[10px] sm:text-xs ">
+                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                          CS ’25 • Maryland
+                        </span>
+                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                          AI + Full-stack
+                        </span>
+                        <span className="rounded-full border border-gray-400 backdrop-blur bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-500 px-3 py-1">
+                          Open to internships
+                        </span>
+                      </div>
+                      <p className="mt-2 mb-1 text-center text-xs text-white/70">
+                        Ping the twin: projects & skills (my human will get the
+                        credit anyway), or life advice (lightly salted)
+                      </p>
                     </>
                   )}
-                  <div className="mt-6 flex flex-col gap-3 items-stretch max-w-3xl mx-auto">
-                    <ChatInput
-                      ref={refs.taRef}
-                      value={state.q}
-                      onChange={actions.setQ}
-                      onSubmit={handleSubmit}
-                      disabled={state.thinking}
-                      showHint
-                      onKeyDown={actions.onKeyDown}
-                    />
-                    <Tabs onSelect={handleTabSelect} centerOnMobile />
-                  </div>
+                  <ChatInput
+                    ref={refs.taRef}
+                    value={state.q}
+                    onChange={actions.setQ}
+                    onSubmit={handleSubmit}
+                    disabled={state.thinking}
+                    showHint
+                    onKeyDown={actions.onKeyDown}
+                  />
+
+                  <QuickActions onOpenTool={actions.openTool} />
                 </div>
               </main>
             )}
@@ -215,8 +270,9 @@ export default function Page() {
             {/* ===== CONVERSATION (cropped scroll + sticky dock; footer hidden) ===== */}
             {showDock && (
               <>
+                <QuotesScramble />
                 <main className="relative z-30 mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw] pt-4">
-                  <div className="mx-auto max-w-5xl w-full">
+                  <div className="mx-auto w-full max-w-3xl">
                     {/* Only this box scrolls; cropped above the dock */}
                     <div
                       ref={scrollRef}
@@ -226,33 +282,34 @@ export default function Page() {
                         scrollPaddingBottom: dockPx,
                       }}
                     >
-                      {state.activeTab ? (
-                        <TabPanel tab={state.activeTab} />
-                      ) : (
-                        <div ref={refs.listRef} className="min-h-20 w-full">
-                          <ChatArea
-                            messages={state.messages}
-                            thinking={state.thinking}
-                            reserveBottomPx={dockPx}
-                          />
-                          <div
-                            ref={endRef}
-                            style={{ scrollMarginBottom: dockPx }}
-                          />
-                        </div>
-                      )}
+                      {/* no activeTab anymore; always render ChatArea */}
+                      <div ref={refs.listRef} className="min-h-20 w-full">
+                        <ChatArea
+                          messages={state.messages}
+                          thinking={state.thinking}
+                          reserveBottomPx={dockPx}
+                          hideQuestionOnAnswer
+                          toolsByMsg={toolsByMsg}
+                        />
+                        <div
+                          ref={endRef}
+                          style={{ scrollMarginBottom: dockPx }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </main>
 
-                {/* Sticky bottom dock (Tabs above Input) */}
+                {/* Sticky bottom dock */}
                 <div
                   ref={dockRef}
                   className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-[#2c3539] to-[#121212]"
                 >
                   <div className="mx-auto w-[92vw] sm:w-[86vw] md:w-[80vw] lg:w-[70vw] max-w-5xl py-3">
-                    <div className="flex flex-col items-stretch gap-3">
-                      <Tabs onSelect={handleTabSelect} centerOnMobile />
+                    <div className="flex flex-col items-stretch gap-3 mx-auto w-full max-w-3xl">
+                      {/* Optional: show QuickActions in the dock as well */}
+                      <QuickActions onOpenTool={actions.openTool} />
+
                       <ChatInput
                         ref={refs.taRef}
                         value={state.q}
@@ -271,17 +328,18 @@ export default function Page() {
             {/* Footer (only on landing) */}
             {showFooter && (
               <footer
-                className={`fixed bottom-0 inset-x-0 
-                  h-[16vh] sm:h-[18vh] md:h-[285px]
-                  flex items-center justify-center
-                  pointer-events-none z-20 overflow-hidden
-                  pb-[env(safe-area-inset-bottom)]`}
+                className={`fixed bottom-0 inset-x-0
+      hidden sm:flex                    // ⬅️ hide on small screens
+      h-[16vh] sm:h-[18vh] md:h-[285px]
+      items-center justify-center
+      pointer-events-none z-20 overflow-hidden
+      pb-[env(safe-area-inset-bottom)]`}
               >
                 <h3
                   className={`relative translate-y-4 sm:translate-y-6
-                    leading-none whitespace-nowrap font-logo
-                    bg-gradient-to-t from-black to-white text-transparent bg-clip-text opacity-10
-                    text-[clamp(4rem,18vw,20rem)]`}
+        leading-none whitespace-nowrap font-logo
+        bg-gradient-to-t from-black to-white text-transparent bg-clip-text opacity-10
+        text-[clamp(4rem,18vw,10rem)]`}
                 >
                   ALI
                 </h3>
@@ -308,7 +366,6 @@ export default function Page() {
               }
             `}</style>
 
-            {/* Fluid cursor stays behind due to -z-10 wrapper */}
             {cursorEnabled && (
               <div className="pointer-events-none fixed inset-0 -z-10">
                 <FluidCursor />
