@@ -1,4 +1,5 @@
-import { openai } from "@ai-sdk/openai";
+import { openai } from "@/lib/openai";
+
 import { generateText } from "ai";
 import { SYSTEM_PROMPT } from "./prompt";
 import { getMe } from "./tools/getMe";
